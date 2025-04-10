@@ -1,4 +1,4 @@
-package am.inline.book
+package am.innline.book
 
 import org.junit.Test
 

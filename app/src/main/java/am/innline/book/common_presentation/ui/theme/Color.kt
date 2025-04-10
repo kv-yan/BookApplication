@@ -1,4 +1,4 @@
-package am.inline.book.ui.theme
+package am.innline.book.common_presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
