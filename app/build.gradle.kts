@@ -87,4 +87,11 @@ dependencies {
     // lottie
     implementation(libs.lottie.compose)
 
+    // pagination
+    implementation (libs.androidx.paging.runtime)
+    implementation (libs.paging.compose)
+
+    // system ui controller
+    implementation(libs.accompanist.systemuicontroller)
+
 }
