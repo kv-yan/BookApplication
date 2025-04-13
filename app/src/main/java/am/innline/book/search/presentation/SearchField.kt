@@ -38,36 +38,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 
-/*@Composable
-fun SearchField(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    onSearch: () -> Unit,
-) {
-    OutlinedTextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.White,
-            unfocusedContainerColor = Color.White,
-            focusedIndicatorColor = MainBlue,
-            unfocusedIndicatorColor = Color.Black,
-            cursorColor = MainBlue
-        ),
-        placeholder = { Text(text = "Search") },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = "Search"
-            )
-        },
-
-        )
-}*/
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,9 +57,11 @@ fun BooksSearchBar(
     ) {
         SearchBar(
             modifier = Modifier
+                .padding(bottom = 4.dp)
                 .align(Alignment.TopCenter)
                 .semantics { traversalIndex = 0f },
             expanded = expanded,
+            shadowElevation = 4.dp,
             inputField = {
                 SearchBarDefaults.InputField(
                     query = value,

@@ -16,7 +16,7 @@ val searchDataModule = module {
     single<BookRepository> {
         BookRepositoryImpl(
             api = get(),
-            bookDao = get(),
+//            bookDao = get(),
         )
     }
     single<GoogleBooksApi> { RetrofitClient.booksApi }

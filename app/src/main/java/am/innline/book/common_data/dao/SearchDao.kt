@@ -22,7 +22,6 @@ interface SearchDao {
     @Query("DELETE FROM search_queries")
     suspend fun deleteAllSearchQueries()
 
-    // Optional: Delete by query string directly
     @Query("DELETE FROM search_queries WHERE query = :query")
     suspend fun deleteSearchQueryByText(query: String)
 }

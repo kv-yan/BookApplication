@@ -70,7 +70,7 @@ fun SearchScreen(
                     books[index]?.let { book ->
                         BookItem(
                             modifier = Modifier.fillMaxWidth(),
-                            book = book
+                            book = book,
                         )
                     }
                 }

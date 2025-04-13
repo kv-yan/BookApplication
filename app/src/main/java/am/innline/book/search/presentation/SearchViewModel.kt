@@ -28,7 +28,7 @@ class SearchViewModel(
     private val insertSearchQueryUseCase: InsertSearchQueryUseCase,
 ) : ViewModel() {
 
-    private val _searchQuery = MutableStateFlow("\" \"")
+    private val _searchQuery = MutableStateFlow("Kotlin")
     val searchQuery = _searchQuery.asStateFlow()
 
     private val _showInitialLoader = MutableStateFlow(false)

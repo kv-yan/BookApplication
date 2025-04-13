@@ -1,23 +1,26 @@
 package am.innline.book.common_presentation.item
 
 import am.inline.book.R
-import am.innline.book.common_presentation.ui.theme.SubTitleColor
 import am.innline.book.search.domain.model.Book
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,26 +38,28 @@ import coil.compose.AsyncImage
 fun BookItem(
     modifier: Modifier = Modifier,
     book: Book,
+    isFavorite: Boolean = false,
+    onFavoriteClick: () -> Unit = {},
 ) {
     var cantShowImage by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        )
+            .padding(vertical = 8.dp, horizontal = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            if (cantShowImage) {
+            if (cantShowImage)
                 Image(
-                    modifier = Modifier.size(80.dp, 120.dp),
+                    modifier = Modifier.size(width = 80.dp, height = 120.dp),
                     painter = painterResource(id = R.drawable.book_image_not_available),
                     contentDescription = null
                 )
-            } else
+            else
                 AsyncImage(
                     modifier = Modifier.size(80.dp, 120.dp),
                     model = book.thumbnailUrl,
@@ -65,42 +70,47 @@ fun BookItem(
                     }
                 )
 
-
-            VerticalDivider(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 4.dp),
-                thickness = 1.dp,
-                color = SubTitleColor
-            )
-
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = 120.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    text = book.title,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Text(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 16.dp, top = 16.dp),
+                        text = book.title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    IconButton(
+                        onClick = { /*TODO*/ }
+                    ) {
+                        val icons =
+                            if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+                        val tint = if (isFavorite) Color.Red else Color.Gray
+                        Icon(
+                            imageVector = icons,
+                            tint = tint,
+                            contentDescription = null
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.padding(start = 16.dp, bottom = 16.dp, end = 16.dp),
                     text = book.authors.joinToString(),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = book.description,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodySmall
-                )
-
             }
         }
-
     }
 }
