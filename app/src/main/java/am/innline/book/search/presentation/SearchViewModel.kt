@@ -46,12 +46,15 @@ class SearchViewModel(
             if (_searchQuery.value.isNotBlank()) {
                 getSearchBooksUseCase(_searchQuery.value)
                     .cachedIn(viewModelScope)
-                    .onStart { _showInitialLoader.value = true }
+                    .onStart {
+                        _showInitialLoader.value = true
+                    }
                     .onEach { _showInitialLoader.value = false }
             } else {
                 flowOf(PagingData.empty())
             }
         }
+
 
     init {
         fetchSearchHistory()
@@ -69,11 +72,6 @@ class SearchViewModel(
             _searchTrigger.value++
         }
     }
-
-    init {
-        fetchSearchHistory()
-    }
-
 
     fun deleteSearchItem(query: String) {
         viewModelScope.launch {

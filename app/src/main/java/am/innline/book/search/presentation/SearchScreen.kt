@@ -35,6 +35,9 @@ fun SearchScreen(
     val showPaginationLoader by viewModel.showPaginationLoader.collectAsState()
     val searchHistory by viewModel.searchHistory.collectAsState()
 
+    val showLoader =
+        showInitialLoader || (books.itemCount == 0 && books.loadState.refresh is LoadState.Loading)
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -57,7 +60,7 @@ fun SearchScreen(
             onClearSearchHistory = { viewModel.clearSearchHistory() }
         )
 
-        if (showInitialLoader) {
+        if (showLoader) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -66,7 +69,7 @@ fun SearchScreen(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(8.dp)
             ) {
-                items(books.itemCount) { index ->
+                items(count = books.itemCount, key = { it }) { index ->
                     books[index]?.let { book ->
                         BookItem(
                             modifier = Modifier.fillMaxWidth(),

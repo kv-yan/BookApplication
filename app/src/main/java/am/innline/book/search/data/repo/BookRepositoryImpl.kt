@@ -24,6 +24,5 @@ class BookRepositoryImpl(private val api: GoogleBooksApi) : BookRepository {
             .catch {
                 throw it
             }
-
     }
 }
