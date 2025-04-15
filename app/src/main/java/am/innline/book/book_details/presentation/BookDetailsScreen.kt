@@ -2,8 +2,8 @@ package am.innline.book.book_details.presentation
 
 
 import am.inline.book.R
+import am.innline.book.book_details.presentation.utils.isUri
 import am.innline.book.common_presentation.ui.theme.ScreenBackground
-import android.provider.CalendarContract
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,10 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -53,7 +53,7 @@ fun BookDetailsScreen(
     viewModel: DetailsViewModel = getViewModel { parametersOf(bookId, loadLocally) },
     onBackClick: () -> Unit,
 ) {
-    val book by viewModel.book.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -65,13 +65,7 @@ fun BookDetailsScreen(
                     containerColor = ScreenBackground,
                     titleContentColor = Color.Black,
                 ),
-                title = {
-                    Text(
-                        text = book?.title ?: "Details",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -83,78 +77,105 @@ fun BookDetailsScreen(
             )
         }
     ) { paddingValues ->
-        book?.let { book ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(paddingValues)
-            ) {
-                // Book Cover Image
+
+        when (val state = uiState) {
+            is DetailsUiState.Error -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(16.dp),
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
-                        model = book.thumbnailUrl ?: R.drawable.book_image_not_available,
-                        contentDescription = book.title,
+                    Text(text = state.message, color = Color.Red)
+                }
+            }
+
+            DetailsUiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is DetailsUiState.Success -> {
+                val book = state.book
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(paddingValues)
+                ) {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop,
-                        error = painterResource(id = R.drawable.book_image_not_available),
-                    )
-                }
-
-                // Book Details
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
-                    // Title
-                    Text(
-                        text = book.title,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-
-                    // Authors
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                            .height(300.dp)
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Authors",
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = book.authors.joinToString(", "),
-                            color = Color.Black.copy(alpha = 0.8f)
+                        // need to check if is uri or image link
+                        AsyncImage(
+                            model = if (isUri(book.imageUri)) {
+                                // Local URI or file path
+                                ImageRequest.Builder(LocalContext.current)
+                                    .data(book.imageUri)
+                                    .build()
+                            } else {
+                                // Assume it's a URL (or use placeholder if invalid)
+                                book.imageUri
+                            },
+                            contentDescription = book.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(id = R.drawable.book_image_not_available),
+                            placeholder = painterResource(id = R.drawable.book_image_not_available)
                         )
                     }
 
-                    // Description
-                    Text(
-                        text = book.description,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Text(
-                        text = book.description,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
+                    // Book Details
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        // Title
+                        Text(
+                            text = book.title,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        // Authors
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Authors",
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = book.authors,
+                                color = Color.Black.copy(alpha = 0.8f)
+                            )
+                        }
+
+                        // Description
+                        Text(
+                            text = book.description,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            text = book.description,
+                            modifier = Modifier.padding(bottom = 24.dp)
+                        )
+                    }
                 }
-            }
-        } ?: run {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+
             }
         }
     }

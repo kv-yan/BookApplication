@@ -1,6 +1,8 @@
 package am.innline.book
 
-import am.innline.book.book_details.presentation.di.bookDetailsPresentationModule
+import am.innline.book.book_details.data.di.detailsDataModule
+import am.innline.book.book_details.domain.di.detailsDomainModule
+import am.innline.book.book_details.presentation.di.detailsPresentationModule
 import am.innline.book.common_data.di.commonDataModule
 import am.innline.book.favorites.data.di.workerModule
 import am.innline.book.favorites.domain.di.favoritesDomainModule
@@ -28,7 +30,9 @@ class BookApplication : Application(), KoinComponent {
                 favoritesPresentationModule,
                 favoritesDomainModule,
                 workerModule,
-                bookDetailsPresentationModule
+                detailsPresentationModule,
+                detailsDomainModule,
+                detailsDataModule
             )
         }
     }
