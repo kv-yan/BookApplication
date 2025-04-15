@@ -2,6 +2,7 @@ package am.innline.book.search.presentation
 
 import am.innline.book.common_presentation.item.BookItem
 import am.innline.book.common_presentation.ui.theme.ScreenBackground
+import am.innline.book.favorites.presentation.FavoritesViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,8 +29,11 @@ import org.koin.androidx.compose.koinViewModel
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = koinViewModel(),
+    favoritesViewModel: FavoritesViewModel,
+    navigateToDetails: (String, Boolean) -> Unit
 ) {
     val books = viewModel.books.collectAsLazyPagingItems()
+    val favoriteBooks by favoritesViewModel.favoriteIds.collectAsState()
     val showInitialLoader by viewModel.showInitialLoader.collectAsState()
     val showPaginationLoader by viewModel.showPaginationLoader.collectAsState()
     val searchHistory by viewModel.searchHistory.collectAsState()
@@ -42,7 +45,8 @@ fun SearchScreen(
         modifier = modifier
             .fillMaxSize()
             .background(ScreenBackground)
-            .systemBarsPadding()
+
+
     ) {
         BooksSearchBar(
             modifier = Modifier
@@ -71,9 +75,13 @@ fun SearchScreen(
             ) {
                 items(count = books.itemCount, key = { it }) { index ->
                     books[index]?.let { book ->
+                        val isFavorite = favoriteBooks.any { it.id == book.id }
                         BookItem(
                             modifier = Modifier.fillMaxWidth(),
                             book = book,
+                            isFavorite = isFavorite,
+                            onFavoriteClick = { favoritesViewModel.toggleFavorite(book) },
+                            onItemClick = { navigateToDetails(book.id, false) }
                         )
                     }
                 }
@@ -90,7 +98,6 @@ fun SearchScreen(
                     }
                 }
 
-                // Add "Load More" button if there are more items to load
                 if (books.loadState.append is LoadState.NotLoading && books.itemCount > 0) {
                     item {
                         Button(
@@ -103,7 +110,6 @@ fun SearchScreen(
                     }
                 }
 
-                // Handled error state
                 if (books.loadState.append is LoadState.Error) {
                     item {
                         ErrorItem(

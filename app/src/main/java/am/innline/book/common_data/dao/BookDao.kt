@@ -1,47 +1,29 @@
 package am.innline.book.common_data.dao
 
-import am.innline.book.common_data.entity.CachedBook
-import androidx.paging.PagingSource
+import am.innline.book.common_data.entity.BookEntity
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import androidx.room.Update
 
 @Dao
 interface BookDao {
-    // Insert cached books
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBooks(books: List<CachedBook>)
+    suspend fun insertBooks(books: List<BookEntity>)
 
-    // Insert a single cached book
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(books: List<CachedBook>)
+    @Query("SELECT * FROM BookEntity WHERE id = :id")
+    suspend fun getBookById(id: String): BookEntity?
 
-    // Get cached books for specific query
-    @Query("SELECT * FROM cached_books WHERE searchQuery = :query ORDER BY timestamp DESC")
-    fun getCachedBooks(query: String): Flow<List<CachedBook>>
+    @Query("SELECT * FROM BookEntity")
+    suspend fun getAllBooks(): List<BookEntity>
 
-    // Get all cached books when query is empty
-    @Query("SELECT * FROM cached_books ORDER BY timestamp DESC")
-    fun getAllCachedBooks(): Flow<List<CachedBook>>
+    @Query("DELETE FROM BookEntity")
+    suspend fun clearAllBooks()
 
-    // Delete old cached books based on timestamp
-    @Query("DELETE FROM cached_books WHERE timestamp < :threshold")
-    suspend fun deleteOldCachedBooks(threshold: Long)
+    @Query("DELETE FROM BookEntity WHERE id IN (:ids)")
+    suspend fun deleteByIds(ids: List<String>)
 
-    // Delete cached books for specific query
-    @Query("DELETE FROM cached_books WHERE searchQuery = :query")
-    suspend fun deleteCachedBooksForQuery(query: String)
-
-    // Delete all cached books
-    @Query("DELETE FROM cached_books")
-    suspend fun deleteAllCachedBooks()
-
-    // Optional: Get all unique search queries in cache
-    @Query("SELECT DISTINCT searchQuery FROM cached_books")
-    fun getAllCachedQueries(): Flow<List<String>>
-
-    @Query("SELECT * FROM cached_books WHERE searchQuery = :query ORDER BY timestamp DESC")
-    fun getBooksPagingSource(query: String): PagingSource<Int, CachedBook>
+    @Update
+    suspend fun updateBooks(books: List<BookEntity>)
 }

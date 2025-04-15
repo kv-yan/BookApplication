@@ -7,7 +7,10 @@ sealed class Destination {
     data object Search : Destination()
 
     @Serializable
-    data object Details : Destination()
+    data class Details(
+        val bookId: String,
+        val loadLocally: Boolean
+    ) : Destination()
 
     @Serializable
     data object Favorites : Destination()

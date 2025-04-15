@@ -6,4 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookRepository {
     fun getSearchResultStream(query: String): Flow<PagingData<Book>>
+
+    fun getFavoriteBooks(list: List<String>): Flow<List<Book>>
+
+    fun getBookById(bookId: String): Flow<Book>
 }

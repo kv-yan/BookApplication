@@ -1,6 +1,8 @@
 [versions]
 agp = "8.9.1"
 converterGson = "2.9.0"
+koinAndroidxWorkmanager = "2.10.0"
+koinAndroidxWorkmanagerVersion = "3.5.6"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -22,12 +24,15 @@ navigationCompose = "2.8.3"
 roomCompiler = "2.6.1"
 datastorePreferences = "1.1.4"
 lottieComposeVersion = "6.4.0"
+roomCommonJvm = "2.7.0"
+workRuntimeKtx = "2.10.0"
 
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -42,6 +47,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koinAndroidxWorkmanagerVersion" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
@@ -66,6 +72,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieComposeVersion" }
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 
 
 

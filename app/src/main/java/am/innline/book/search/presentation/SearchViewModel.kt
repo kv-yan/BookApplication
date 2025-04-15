@@ -88,7 +88,6 @@ class SearchViewModel(
     private fun fetchSearchHistory() {
         getSearchHistoryUseCase().onEach {
             _searchHistory.value = it.map { it.query }
-            println("Search History: ${_searchHistory.value}")
         }.launchIn(viewModelScope)
     }
 

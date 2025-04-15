@@ -2,7 +2,7 @@ package am.innline.book.common_data.database
 
 import am.innline.book.common_data.dao.BookDao
 import am.innline.book.common_data.dao.SearchDao
-import am.innline.book.common_data.entity.CachedBook
+import am.innline.book.common_data.entity.BookEntity
 import am.innline.book.common_data.entity.SearchQuery
 import android.content.Context
 import androidx.room.Database
@@ -10,13 +10,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [CachedBook::class, SearchQuery::class],
+    entities = [SearchQuery::class, BookEntity::class],
     version = 1,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun bookDao(): BookDao
     abstract fun searchDao(): SearchDao
+    abstract fun bookDao(): BookDao
 
 
     companion object {

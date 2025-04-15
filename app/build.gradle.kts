@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.common.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -67,6 +68,8 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.workmanager)
+
     // coil
     implementation(libs.coil.compose)
     // navigation
@@ -93,5 +96,8 @@ dependencies {
 
     // system ui controller
     implementation(libs.accompanist.systemuicontroller)
+
+    // work manager
+    implementation(libs.androidx.work.runtime.ktx)
 
 }

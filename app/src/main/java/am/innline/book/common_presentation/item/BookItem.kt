@@ -40,6 +40,7 @@ fun BookItem(
     book: Book,
     isFavorite: Boolean = false,
     onFavoriteClick: () -> Unit = {},
+    onItemClick: () -> Unit = {},
 ) {
     var cantShowImage by rememberSaveable { mutableStateOf(false) }
 
@@ -48,7 +49,8 @@ fun BookItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        onClick = onItemClick
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -90,7 +92,7 @@ fun BookItem(
                     )
 
                     IconButton(
-                        onClick = { /*TODO*/ }
+                        onClick = { onFavoriteClick() }
                     ) {
                         val icons =
                             if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
@@ -114,3 +116,4 @@ fun BookItem(
         }
     }
 }
+
