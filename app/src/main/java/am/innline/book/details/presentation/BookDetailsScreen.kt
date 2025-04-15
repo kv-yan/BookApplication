@@ -25,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -138,7 +139,9 @@ fun BookDetailsScreen(
                     ) {
                         // Title
                         Text(
-                            text = book.title, modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            text = book.title,
+                            style = MaterialTheme.typography.titleLarge,
                         )
 
                         // Authors
@@ -147,13 +150,15 @@ fun BookDetailsScreen(
                             modifier = Modifier.padding(bottom = 16.dp)
                         ) {
                             Icon(
+                                modifier = Modifier.size(18.dp),
                                 imageVector = Icons.Default.Person,
-                                contentDescription = "Authors",
-                                modifier = Modifier.size(18.dp)
+                                contentDescription = "Authors"
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = book.authors, color = Color.Black.copy(alpha = 0.8f)
+                                text = book.authors,
+                                color = Color.Black.copy(alpha = 0.8f),
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
 
@@ -171,5 +176,9 @@ fun BookDescription(description: String) {
     val cleanDescription = remember(description) {
         Html.fromHtml(description, Html.FROM_HTML_MODE_COMPACT).toString()
     }
-    Text(text = cleanDescription)
+    Text(
+        text = cleanDescription,
+        style = MaterialTheme.typography.bodyMedium,
+        color = Color.Black.copy(alpha = 0.9f)
+    )
 }

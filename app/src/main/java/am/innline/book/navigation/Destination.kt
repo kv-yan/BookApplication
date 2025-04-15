@@ -9,7 +9,7 @@ sealed class Destination {
     @Serializable
     data class Details(
         val bookId: String,
-        val loadLocally: Boolean
+        val loadLocally: Boolean,
     ) : Destination()
 
     @Serializable
