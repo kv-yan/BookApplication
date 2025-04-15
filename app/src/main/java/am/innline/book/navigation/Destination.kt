@@ -1,6 +1,7 @@
 package am.innline.book.navigation
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 sealed class Destination {
     @Serializable
