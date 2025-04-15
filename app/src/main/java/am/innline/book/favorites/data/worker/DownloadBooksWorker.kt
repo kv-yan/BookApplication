@@ -15,6 +15,7 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -29,7 +30,6 @@ class DownloadBooksWorker(
     override suspend fun doWork(): Result {
         return try {
             val filePath = inputData.getString("filePath") ?: return Result.failure()
-            val totalBooks = inputData.getInt("totalBooks", 1)
             val syncStrategy = inputData.getString("syncStrategy")
             val file = File(filePath)
 
@@ -40,8 +40,8 @@ class DownloadBooksWorker(
             val newBookIds = newBooks.map { it.id }.toSet()
 
             when (syncStrategy) {
-                "optimized" -> optimizedSync(newBooks, newBookIds, totalBooks)
-                else -> fullRefresh(newBooks, totalBooks)
+                "optimized" -> optimizedSync(newBooks, newBookIds)
+                else -> fullRefresh(newBooks)
             }.also {
                 file.delete() // Clean up temp file
             }
@@ -54,11 +54,16 @@ class DownloadBooksWorker(
     private suspend fun optimizedSync(
         newBooks: List<Book>,
         newBookIds: Set<String>,
-        totalBooks: Int
     ): Result {
         return withContext(Dispatchers.IO) {
+            val existingBooks = mutableListOf<BookEntity>()
+
+            bookDao.getAllBooks().onEach {
+                existingBooks.clear()
+                existingBooks.addAll(it)
+            }
+
             // Step 1: Get existing books from DB
-            val existingBooks = bookDao.getAllBooks()
             val existingBookIds = existingBooks.map { it.id }.toSet()
 
             // Step 2: Identify books to add/update/delete
@@ -112,7 +117,7 @@ class DownloadBooksWorker(
         }
     }
 
-    private suspend fun fullRefresh(books: List<Book>, totalBooks: Int): Result {
+    private suspend fun fullRefresh(books: List<Book>): Result {
         // Original implementation (clear all + insert new)
         bookDao.clearAllBooks()
 

@@ -1,9 +1,10 @@
 package am.innline.book.navigation
 
-import am.innline.book.book_details.presentation.BookDetailsScreen
+import am.innline.book.details.presentation.BookDetailsScreen
 import am.innline.book.favorites.presentation.FavoritesScreen
 import am.innline.book.favorites.presentation.FavoritesViewModel
 import am.innline.book.search.presentation.SearchScreen
+import am.innline.book.search.presentation.SearchViewModel
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import org.koin.androidx.compose.koinViewModel
 fun AppNavigation(
     modifier: Modifier = Modifier,
     favoriteViewModel: FavoritesViewModel = koinViewModel(),
+    searchViewModel: SearchViewModel = koinViewModel(),
 ) {
     val navController = rememberNavController()
 
@@ -49,6 +51,7 @@ fun AppNavigation(
             composable<Destination.Search> {
                 SearchScreen(
                     favoritesViewModel = favoriteViewModel,
+                    searchViewModel = searchViewModel,
                     navigateToDetails = { bookId, loadLocally ->
                         navController.navigateOnce(
                             Destination.Details(
@@ -59,26 +62,28 @@ fun AppNavigation(
             }
             composable<Destination.Favorites> {
                 FavoritesScreen(
-                    viewModel = favoriteViewModel, navigateToDetails = { bookId, loadLocally ->
+                    favoritesViewModel = favoriteViewModel,
+                    navigateToDetails = { bookId, loadLocally ->
                         navController.navigateOnce(Destination.Details(bookId, loadLocally))
-                    })
+                    }
+                )
             }
             composable<Destination.Details> {
                 val details = it.toRoute<Destination.Details>()
                 BookDetailsScreen(
                     bookId = details.bookId,
                     loadLocally = details.loadLocally,
-                    onBackClick = { navController.popBackStack() })
+                    onBackClick = { navController.navigateUp() })
             }
         }
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
+        currentDestination?.route
         Destination.Details::class.java.canonicalName
-        currentDestination?.route?.javaClass
 
         AnimatedVisibility(
-            visible = currentDestination?.route !== Destination.Details::class.java.canonicalName
+            visible = currentDestination?.route?.contains("Details") != true
         ) {
 
             NavigationBar(

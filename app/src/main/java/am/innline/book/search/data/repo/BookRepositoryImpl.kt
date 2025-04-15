@@ -20,7 +20,11 @@ class BookRepositoryImpl(private val api: GoogleBooksApi) : BookRepository {
 
     override fun getSearchResultStream(query: String): Flow<PagingData<Book>> {
         return Pager(
-            config = PagingConfig(pageSize = 10),
+            config = PagingConfig(
+                pageSize = 10,
+                prefetchDistance = 5,   // Load next page when 5 items away
+                initialLoadSize = 40
+            ),
             pagingSourceFactory = { BookPagingSource(api, query) }
         ).flow
             .flowOn(Dispatchers.IO)
@@ -51,7 +55,7 @@ class BookRepositoryImpl(private val api: GoogleBooksApi) : BookRepository {
         emit(books)
     }.flowOn(Dispatchers.IO)
 
-    override fun getBookById(bookId: String): Flow<Book>  = flow{
+    override fun getBookById(bookId: String): Flow<Book> = flow {
         val bookItem = api.getBookById(bookId)
         emit(bookItem.toDomain())
     }.catch {

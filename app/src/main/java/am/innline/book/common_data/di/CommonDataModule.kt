@@ -5,6 +5,7 @@ import am.innline.book.common_data.repository.FavoritesRepositoryImpl
 import am.innline.book.common_data.repository.favoritesDataStore
 import am.innline.book.common_domain.repository.FavoritesRepository
 import android.content.Context
+import android.net.ConnectivityManager
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,4 +21,6 @@ val commonDataModule = module {
     single<CoroutineDispatcher> { Dispatchers.IO }
     singleOf(::FavoritesRepositoryImpl) { bind<FavoritesRepository>() }
     single<DataStore<Preferences>> { get<Context>().favoritesDataStore }
+    single<ConnectivityManager> { get<Context>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
 }
+

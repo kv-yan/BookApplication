@@ -1,4 +1,4 @@
-package am.innline.book.book_details.presentation.utils
+package am.innline.book.details.presentation.utils
 
 import androidx.core.net.toUri
 import java.io.File

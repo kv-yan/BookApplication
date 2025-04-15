@@ -1,9 +1,10 @@
-package am.innline.book.book_details.presentation
+package am.innline.book.details.presentation
 
 
 import am.inline.book.R
-import am.innline.book.book_details.presentation.utils.isUri
 import am.innline.book.common_presentation.ui.theme.ScreenBackground
+import am.innline.book.details.presentation.utils.isUri
+import android.text.Html
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,26 +59,20 @@ fun BookDetailsScreen(
     val scrollState = rememberScrollState()
 
     Scaffold(
-        modifier = modifier,
-        containerColor = ScreenBackground,
-        topBar = {
+        modifier = modifier, containerColor = ScreenBackground, topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = ScreenBackground,
                     titleContentColor = Color.Black,
-                ),
-                title = {},
-                navigationIcon = {
+                ), title = {}, navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
-                }
-            )
-        }
-    ) { paddingValues ->
+                })
+        }) { paddingValues ->
 
         when (val state = uiState) {
             is DetailsUiState.Error -> {
@@ -120,8 +116,7 @@ fun BookDetailsScreen(
                         AsyncImage(
                             model = if (isUri(book.imageUri)) {
                                 // Local URI or file path
-                                ImageRequest.Builder(LocalContext.current)
-                                    .data(book.imageUri)
+                                ImageRequest.Builder(LocalContext.current).data(book.imageUri)
                                     .build()
                             } else {
                                 // Assume it's a URL (or use placeholder if invalid)
@@ -143,8 +138,7 @@ fun BookDetailsScreen(
                     ) {
                         // Title
                         Text(
-                            text = book.title,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            text = book.title, modifier = Modifier.padding(bottom = 8.dp)
                         )
 
                         // Authors
@@ -159,24 +153,23 @@ fun BookDetailsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = book.authors,
-                                color = Color.Black.copy(alpha = 0.8f)
+                                text = book.authors, color = Color.Black.copy(alpha = 0.8f)
                             )
                         }
 
                         // Description
-                        Text(
-                            text = book.description,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        Text(
-                            text = book.description,
-                            modifier = Modifier.padding(bottom = 24.dp)
-                        )
+                        BookDescription(description = book.description)
                     }
                 }
-
             }
         }
     }
+}
+
+@Composable
+fun BookDescription(description: String) {
+    val cleanDescription = remember(description) {
+        Html.fromHtml(description, Html.FROM_HTML_MODE_COMPACT).toString()
+    }
+    Text(text = cleanDescription)
 }

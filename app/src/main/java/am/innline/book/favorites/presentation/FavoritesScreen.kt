@@ -38,30 +38,38 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
-    viewModel: FavoritesViewModel = koinViewModel(),
-    navigateToDetails: (String, Boolean) -> Unit
+    favoritesViewModel: FavoritesViewModel = koinViewModel(),
+    navigateToDetails: (String, Boolean) -> Unit,
 ) {
-    val booksState by viewModel.booksState.collectAsState()
-    val favIds by viewModel.favoriteIds.collectAsState()
+    val booksState by favoritesViewModel.booksState.collectAsState()
+    val favIds by favoritesViewModel.favoriteIds.collectAsState()
     val context = LocalContext.current
-    val downloadState by viewModel.downloadState.collectAsState()
+    val downloadState by favoritesViewModel.downloadState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     when (val state = booksState) {
         FavoriteUiState.Empty -> {
-            Text(
+            Box(
                 modifier = Modifier.fillMaxSize(),
-                textAlign = TextAlign.Center,
-                text = "There is nothing here"
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = "There is nothing here"
+                )
+            }
         }
 
         is FavoriteUiState.Error -> {
-            Text(
+            Box(
                 modifier = Modifier.fillMaxSize(),
-                textAlign = TextAlign.Center,
-                text = state.message
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = state.message
+                )
+            }
         }
 
         FavoriteUiState.Loading -> {
@@ -91,7 +99,7 @@ fun FavoritesScreen(
                                 containerColor = Color.White
                             ),
                             onClick = {
-                                viewModel.downloadAllFavoritesForOffline(
+                                favoritesViewModel.downloadAllFavoritesForOffline(
                                     context,
                                     lifecycleOwner
                                 )
@@ -108,7 +116,7 @@ fun FavoritesScreen(
                         BookItem(
                             book = book,
                             isFavorite = favIds.any { it.id == book.id },
-                            onFavoriteClick = { viewModel.toggleFavorite(book) },
+                            onFavoriteClick = { favoritesViewModel.toggleFavorite(book) },
                             onItemClick = { navigateToDetails(book.id, true) }
                         )
                     }

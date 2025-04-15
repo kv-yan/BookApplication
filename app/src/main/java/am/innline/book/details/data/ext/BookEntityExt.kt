@@ -1,7 +1,8 @@
-package am.innline.book.book_details.data.ext
+package am.innline.book.details.data.ext
 
 import am.innline.book.common_data.entity.BookEntity
 import am.innline.book.favorites.domain.model.BookDetails
+import am.innline.book.search.domain.model.Book
 
 fun BookEntity.toBookDetails(): BookDetails {
     return BookDetails(
@@ -10,5 +11,15 @@ fun BookEntity.toBookDetails(): BookDetails {
         authors = authors,
         description = description,
         imageUri = imagePath,
+    )
+}
+
+fun BookEntity.toBook(): Book {
+    return Book(
+        id = id,
+        title = title,
+        authors = listOf(authors),
+        description = description,
+        thumbnailUrl = imagePath,
     )
 }

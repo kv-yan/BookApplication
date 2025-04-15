@@ -1,6 +1,6 @@
-package am.innline.book.book_details.presentation.di
+package am.innline.book.details.presentation.di
 
-import am.innline.book.book_details.presentation.DetailsViewModel
+import am.innline.book.details.presentation.DetailsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

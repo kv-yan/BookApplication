@@ -1,4 +1,4 @@
-package am.innline.book.book_details.domain.useacase
+package am.innline.book.details.domain.usecase
 
 import am.innline.book.favorites.domain.model.BookDetails
 import am.innline.book.search.data.ext.toBookDetails
