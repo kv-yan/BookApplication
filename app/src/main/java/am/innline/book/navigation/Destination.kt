@@ -1,6 +1,7 @@
 package am.innline.book.navigation
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 sealed class Destination {
     @Serializable
@@ -9,7 +10,7 @@ sealed class Destination {
     @Serializable
     data class Details(
         val bookId: String,
-        val loadLocally: Boolean
+        val loadLocally: Boolean,
     ) : Destination()
 
     @Serializable

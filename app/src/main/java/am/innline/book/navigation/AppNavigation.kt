@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,7 +73,10 @@ fun AppNavigation(
                 BookDetailsScreen(
                     bookId = details.bookId,
                     loadLocally = details.loadLocally,
-                    onBackClick = { navController.navigateUp() })
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
 
@@ -86,8 +89,9 @@ fun AppNavigation(
             visible = currentDestination?.route?.contains("Details") != true
         ) {
 
-            NavigationBar(
-                modifier = Modifier.fillMaxWidth(), containerColor = White
+            BottomAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = White
             ) {
                 destinations.forEach { bottomItem ->
                     NavigationBarItem(
@@ -101,6 +105,7 @@ fun AppNavigation(
                             )
                         })
                 }
+
             }
         }
     }
@@ -114,11 +119,11 @@ fun NavController.navigateOnce(destination: Destination) {
 
     if (!isSameScreen) {
         navigate(destination) {
-            launchSingleTop = true
+//            launchSingleTop = true
             popUpTo(graph.startDestinationId) {
-                saveState = true
+//                saveState = true
             }
-            restoreState = true
+//            restoreState = true
         }
     }
 }
