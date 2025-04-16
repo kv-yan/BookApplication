@@ -2,16 +2,13 @@ package am.innline.book.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed class Destination {
+sealed class AppDestination {
     @Serializable
-    data object Search : Destination()
+    data object Book : AppDestination()
 
     @Serializable
     data class Details(
         val bookId: String,
         val loadLocally: Boolean,
-    ) : Destination()
-
-    @Serializable
-    data object Favorites : Destination()
+    ) : AppDestination()
 }

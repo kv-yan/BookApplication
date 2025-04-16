@@ -46,7 +46,6 @@ class SearchViewModel(
     private val _searchHistory = MutableStateFlow<List<String>>(emptyList())
     val searchHistory = _searchHistory.asStateFlow()
 
-    // Paging data with proper caching
     private var _pagingData: Flow<PagingData<Book>>? = null
     val pagingData: Flow<PagingData<Book>>
         get() {
@@ -55,7 +54,6 @@ class SearchViewModel(
             }
         }
 
-    // Track the current search term to prevent unnecessary reloads
     private var currentSearchTerm = ""
 
     init {
@@ -117,7 +115,7 @@ class SearchViewModel(
             viewModelScope.launch {
                 insertQueryUseCase(_searchQuery.value)
             }
-            _pagingData = null // Only clear cache if search term changed
+            _pagingData = null // Only clearing cache if search term changed
             _searchUiState.value = SearchUiState.InitialLoading
         }
     }
