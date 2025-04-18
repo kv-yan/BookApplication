@@ -109,7 +109,7 @@ class FavoritesViewModel(
     }
 
     private fun updateBooksFromCache(favorites: List<FavoriteBook>) {
-        val cachedBooks = favorites.mapNotNull { favorite ->
+        val cachedBooks = favorites.map { favorite ->
             _booksCache[favorite.id]?.let { book ->
                 // If book is from shared prefs (only has title), create a minimal Book object
                 if (book.hasOnlyTitle()) {
@@ -211,51 +211,56 @@ class FavoritesViewModel(
 
         val data = workDataOf(
             "filePath" to tempFile.absolutePath,
-            "totalBooks" to booksToDownload.size,
-            "syncStrategy" to "optimized" // Flag for optimized sync
+            "totalBooks" to booksToDownload.size
         )
 
-        val request = OneTimeWorkRequestBuilder<DownloadBooksWorker>().setInputData(data).build()
+        val request = OneTimeWorkRequestBuilder<DownloadBooksWorker>()
+            .setInputData(data)
+            .build()
 
-        // Remove previous observer if any
-        WorkManager.getInstance(context).getWorkInfoByIdLiveData(request.id)
-            .removeObservers(lifecycleOwner) // You'll need to pass lifecycleOwner
+        // Clear any previous observers
+        WorkManager.getInstance(context)
+            .getWorkInfoByIdLiveData(request.id)
+            .removeObservers(lifecycleOwner)
 
-        WorkManager.getInstance(context).getWorkInfoByIdLiveData(request.id)
-
-            .observeForever { workInfo ->
+        // Set up new observer
+        WorkManager.getInstance(context)
+            .getWorkInfoByIdLiveData(request.id)
+            .observe(lifecycleOwner) { workInfo ->
                 when (workInfo?.state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        _downloadState.value = DownloadState.InProgress(0, booksToDownload.size)
+                    }
+
                     WorkInfo.State.RUNNING -> {
                         val progress = workInfo.progress.getInt("progress", 0)
+                        val total = workInfo.progress.getInt("totalBooks", booksToDownload.size)
                         _downloadState.value = DownloadState.InProgress(
-                            current = progress, total = booksToDownload.size
+                            current = progress,
+                            total = total
                         )
+                        Log.d("DownloadProgress", "Progress: $progress/$total")
                     }
 
                     WorkInfo.State.SUCCEEDED -> {
                         _downloadState.value = DownloadState.Completed
-                        // Reset after showing completion
-                        viewModelScope.launch {
-                            delay(2000) // Show completion for 2 seconds
-                            _downloadState.value = DownloadState.Idle
-                        }
-                    }
-
-                    WorkInfo.State.FAILED -> {
-                        _downloadState.value = DownloadState.Error("Download failed")
-                        // Reset after showing error
+                        tempFile.delete()
                         viewModelScope.launch {
                             delay(2000)
                             _downloadState.value = DownloadState.Idle
                         }
                     }
 
-                    else -> {
-                        Log.e(
-                            "DownloadBooksWorker",
-                            "downloadAllFavoritesForOffline: workInfo.state = ${workInfo?.state}",
-                        )
+                    WorkInfo.State.FAILED -> {
+                        _downloadState.value = DownloadState.Error("Download failed")
+                        tempFile.delete()
+                        viewModelScope.launch {
+                            delay(2000)
+                            _downloadState.value = DownloadState.Idle
+                        }
                     }
+
+                    else -> {}
                 }
             }
 

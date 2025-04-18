@@ -126,18 +126,17 @@ fun FavoritesScreen(
         }
     }
 
-    when (downloadState) {
+    when (val state = downloadState) {
         is DownloadState.InProgress -> {
-            val progress = (downloadState as DownloadState.InProgress)
             AlertDialog(
                 onDismissRequest = { },
                 title = { Text("Downloading Books") },
                 text = {
                     Column {
-                        Text("Downloading ${progress.current} of ${progress.total} books")
+                        Text("Downloading ${state.current} of ${state.total} books")
                         Spacer(Modifier.height(8.dp))
                         LinearProgressIndicator(
-                            progress = { progress.current.toFloat() / progress.total.toFloat() },
+                            progress = { state.current.toFloat() / state.total.toFloat() },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -165,11 +164,10 @@ fun FavoritesScreen(
         }
 
         is DownloadState.Error -> {
-            val error = (downloadState as DownloadState.Error)
             AlertDialog(
                 onDismissRequest = { /* Auto-dismissed */ },
                 title = { Text("Download Error") },
-                text = { Text(error.message) },
+                text = { Text(state.message) },
                 confirmButton = {},
                 properties = DialogProperties(
                     dismissOnBackPress = false,

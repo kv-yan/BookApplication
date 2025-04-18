@@ -9,5 +9,7 @@ data class BookEntity(
     val title: String,
     val authors: String,
     val description: String,
-    val imagePath: String // local path
-)
+    val imagePath: String, // local path
+) {
+    companion object
+}
